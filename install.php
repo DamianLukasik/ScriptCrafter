@@ -11,7 +11,7 @@ function getTargetLink($useLocalBin = false)
 // Ustawienia ścieżek
 $target = getTargetLink($useLocalBin);
 echo "Target: $target\n";
-$link = __DIR__ . '/sc';
+$link = './sc';
 echo "Link: $link\n";
 
 // Informacja diagnostyczna
@@ -30,21 +30,6 @@ if (file_exists($link) || file_exists($link . '.bat')) {
     exit(0);
 }
 
-function createBatFile(&$target)
-{
-    // Windows – twórz .bat jako wrapper
-    $binPathForBat = str_replace('/', '\\', $target);
-    $batContent = <<<BAT
-@ECHO OFF
-setlocal DISABLEDELAYEDEXPANSION
-SET BIN_TARGET=%~dp0{$binPathForBat}
-SET COMPOSER_RUNTIME_BIN_DIR=%~dp0
-php "%BIN_TARGET%" %*
-BAT;
-    file_put_contents(__DIR__ . '/sc.bat', $batContent);
-    echo "[ScriptCrafter] Utworzono sc.bat dla Windows\n";
-}
-
 function createSymlink(&$target, &$link)
 {
     // Unix – używaj symlink, ale fallback na copy
@@ -60,9 +45,4 @@ function createSymlink(&$target, &$link)
     }
 }
 
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    createBatFile($target);
-    createSymlink($target, $link);
-} else {
-    createSymlink($target, $link);
-}
+createSymlink($target, $link);

@@ -21,8 +21,7 @@
     "phpunit/phpunit": "^9"
   },
   "bin": [
-    "bin/sc",
-    "bin/scriptcrafter"
+    "bin/sc"
   ],
   "scripts": {
     "post-install-cmd": [
