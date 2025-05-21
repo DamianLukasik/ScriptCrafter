@@ -1,9 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
+require './vendor/autoload.php';
 
-use ScriptCrafter\Console\App;
+use ThunderbirdDeveloper\Bifrost\ScriptCrafter;
 
-$cli = new App();
+$cli = new ScriptCrafter();
+$argv = array_slice($argv, 1);
 $cli->run($argv);

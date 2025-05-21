@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ScriptCrafter\\": "src/"
+      "ThunderbirdDeveloper\\Bifrost\\": "src/"
     }
   },
   "require-dev": {

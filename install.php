@@ -1,17 +1,28 @@
 <?php
+echo "[ScriptCrafter] Install script running\n";
 // Sprawdzenie, czy podano opcję --no-vendor
 $useLocalBin = in_array('--no-vendor', $argv, true);
 
+function getTargetLink($useLocalBin = false)
+{
+    return __DIR__ . ($useLocalBin ? '/bin/sc' : '/vendor/bin/sc');
+}
+
 // Ustawienia ścieżek
-$target = __DIR__ . ($useLocalBin ? '/bin/sc' : '/vendor/bin/sc');
+$target = getTargetLink($useLocalBin);
+echo "Target: $target\n";
 $link = __DIR__ . '/sc';
+echo "Link: $link\n";
 
 // Informacja diagnostyczna
 echo "[ScriptCrafter] Tryb instalacji: " . ($useLocalBin ? "LOCAL BIN (bin/sc)" : "VENDOR BIN (vendor/bin/sc)") . "\n";
 
 if (!file_exists($target)) {
-    echo "[ScriptCrafter] Nie znaleziono pliku $target\n";
-    exit(1);
+    $target = getTargetLink(!$useLocalBin);
+    if (!file_exists($target)) {
+        echo "[ScriptCrafter] Nie znaleziono pliku $target\n";
+        exit(1);
+    }
 }
 
 if (file_exists($link) || file_exists($link . '.bat')) {
@@ -19,7 +30,8 @@ if (file_exists($link) || file_exists($link . '.bat')) {
     exit(0);
 }
 
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+function createBatFile(&$target)
+{
     // Windows – twórz .bat jako wrapper
     $binPathForBat = str_replace('/', '\\', $target);
     $batContent = <<<BAT
@@ -31,11 +43,26 @@ php "%BIN_TARGET%" %*
 BAT;
     file_put_contents(__DIR__ . '/sc.bat', $batContent);
     echo "[ScriptCrafter] Utworzono sc.bat dla Windows\n";
-} else {
-    // Unix/Linux/Mac – próbuj symlink
-    if (symlink($target, $link)) {
+}
+
+function createSymlink(&$target, &$link)
+{
+    // Unix – używaj symlink, ale fallback na copy
+    if (@symlink($target, $link)) {
         echo "[ScriptCrafter] Symlink stworzony: $link -> $target\n";
     } else {
-        echo "[ScriptCrafter] Nie udało się stworzyć symlinku\n";
+        echo "[ScriptCrafter] Nie udało się stworzyć symlinku, próbuję kopiować...\n";
+        if (copy($target, $link)) {
+            echo "[ScriptCrafter] Skopiowano plik do: $link\n";
+        } else {
+            echo "[ScriptCrafter] Nie udało się skopiować pliku.\n";
+        }
     }
+}
+
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    createBatFile($target);
+    createSymlink($target, $link);
+} else {
+    createSymlink($target, $link);
 }
