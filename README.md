@@ -7,6 +7,11 @@ It offers a clean and extensible approach to automating code generation, saving 
 
 ## Installation
 
+You can install Script Crafter via Composer. Run the following command in your terminal:
+```bash
+composer require thunderbirddeveloper/scriptcrafter
+```
+
 ## Usage
 
 ## Methods available in the ScriptCrafter class
