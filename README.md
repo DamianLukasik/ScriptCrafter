@@ -12,6 +12,16 @@ You can install Script Crafter via Composer. Run the following command in your t
 composer require thunderbirddeveloper/scriptcrafter
 ```
 
+If you are using ScriptCrafter, add to your composer.json:
+```bash
+"config": {
+  "allow-plugins": {
+    "thunderbirddeveloper/scriptcrafter": true
+  }
+}
+```
+or confirm installation by entering y.
+
 ## Usage
 
 ## Methods available in the ScriptCrafter class

@@ -9,28 +9,31 @@ use Composer\Plugin\Capable;
 
 class ScriptCrafterPlugin implements PluginInterface, Capable
 {
+    private $namePlugin = "\e[32m[ScriptCrafter]\e[0m";
+
     function createSymlink(&$target, &$link)
     {
-        // Unix – używaj symlink, ale fallback na copy
+        // Unix – try symlink, fallback to copy
         if (@symlink($target, $link)) {
-            echo "[ScriptCrafter] Symlink stworzony: $link -> $target\n";
+            echo $this->namePlugin . " Symlink created: $link -> $target\n";
         } else {
-            echo "[ScriptCrafter] Nie udało się stworzyć symlinku, próbuję kopiować...\n";
+            echo $this->namePlugin . " Failed to create symlink, attempting to copy the file...\n";
             if (copy($target, $link)) {
-                echo "[ScriptCrafter] Skopiowano plik do: $link\n";
+                echo $this->namePlugin . " File copied to: $link\n";
             } else {
-                echo "[ScriptCrafter] Nie udało się skopiować pliku.\n";
+                echo $this->namePlugin . " Failed to copy the file.\n";
             }
         }
     }
+
     public function activate(Composer $composer, IOInterface $io)
     {
-        // Plugin aktywowany – tu możesz zarejestrować logikę
-        $io->write("[ScriptCrafter] Plugin aktywowany. Spróbuję utworzyć symlink...");
+        // Plugin activated – you can register logic here
+        $io->write($this->namePlugin . " Plugin activated. Attempting to create symlink...");
         $target = __DIR__ . '/../bin/sc';
         $link = getcwd() . '/sc';
         $this->createSymlink($target, $link);
-        $io->write("[ScriptCrafter] Utworzono symlink: sc -> bin/sc");
+        $io->write($this->namePlugin . " Symlink created: sc -> bin/sc");
     }
 
     public function deactivate(Composer $composer, IOInterface $io) {}
